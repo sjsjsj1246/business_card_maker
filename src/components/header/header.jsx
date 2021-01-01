@@ -9,8 +9,8 @@ const Header = ({ onLogout }) => {
           Logout
         </button>
       )}
-      <img className={styles.logo} src="/images/logo.png" alt="logo" />
-      <h1 className={styles.title}>Business Caed maker</h1>
+      <img className={styles.logo} src="images/logo.png" alt="logo" />
+      <h1 className={styles.title}>Business Card maker</h1>
     </header>
   );
 };
