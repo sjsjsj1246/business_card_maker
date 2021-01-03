@@ -51,7 +51,7 @@ const CardAddForm = ({ FileInput, onAdd }) => {
         className={styles.input}
         type="text"
         name="company"
-        placeholder="Name"
+        placeholder="Company"
       />
       <select
         ref={themeRef}

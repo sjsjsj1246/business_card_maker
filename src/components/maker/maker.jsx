@@ -6,50 +6,31 @@ import Header from '../header/header';
 import Preview from '../preview/preview';
 import styles from './maker.module.css';
 
-const Maker = ({ FileInput, authService }) => {
-  const [cards, setCards] = useState({
-    1: {
-      id: '1',
-      name: 'Hwang In Seo',
-      company: '3sec',
-      theme: 'light',
-      title: 'Software Engineer',
-      emain: 'sjsjsj1246@gmail.com',
-      message: 'hi',
-      fileName: 'sjsjsj1246',
-      fileRUL: '',
-    },
-    2: {
-      id: '2',
-      name: 'Hwang In Seo2',
-      company: '3sec',
-      theme: 'dark',
-      title: 'Software Engineer',
-      emain: 'sjsjsj1246@gmail.com',
-      message: 'hi',
-      fileName: 'sjsjsj1246',
-      fileRUL: '',
-    },
-    3: {
-      id: '3',
-      name: 'Hwang In Seo3',
-      company: '3sec',
-      theme: 'colorful',
-      title: 'Software Engineer',
-      emain: 'sjsjsj1246@gmail.com',
-      message: 'hi',
-      fileName: 'sjsjsj1246',
-      fileRUL: '',
-    },
-  });
+const Maker = ({ FileInput, authService, cardRepository }) => {
+  const historyState = useHistory().state;
+  const [cards, setCards] = useState({});
+  const [userId, setUserId] = useState(historyState && historyState.id);
+
   const history = useHistory();
   const onLogout = () => {
     authService.logout();
   };
 
   useEffect(() => {
+    if (!userId) {
+      return;
+    }
+    const stopSync = cardRepository.syncCards(userId, (cards) => {
+      setCards(cards);
+    });
+    return () => stopSync();
+  }, [userId]);
+
+  useEffect(() => {
     authService.onAuthChange((user) => {
-      if (!user) {
+      if (user) {
+        setUserId(user.uid);
+      } else {
         history.push('/');
       }
     });
@@ -61,6 +42,7 @@ const Maker = ({ FileInput, authService }) => {
       updated[card.id] = card;
       return updated;
     });
+    cardRepository.saveCard(userId, card);
   };
 
   const deleteCard = (card) => {
@@ -69,6 +51,7 @@ const Maker = ({ FileInput, authService }) => {
       delete updated[card.id];
       return updated;
     });
+    cardRepository.removeCard(userId, card);
   };
 
   return (
